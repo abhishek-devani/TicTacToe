@@ -74,13 +74,17 @@ public class Game {
 
     public void undo() {
 
-        if (moves.isEmpty()) {
-            System.out.println("No moves to undo");
+        Move lastMove = remove();
+        if (lastMove == null) {
             return;
         }
-        Move lastMove = moves.get(moves.size() - 1);
-        moves.remove(lastMove);
 
+        updateTheCellAndUndoStrategies(lastMove);
+
+        updateNextPlayer();
+    }
+
+    private void updateTheCellAndUndoStrategies(Move lastMove) {
         Cell cell = lastMove.getCell();
         cell.setCellState(CellState.EMPTY);
         cell.setPlayer(null);
@@ -88,7 +92,19 @@ public class Game {
         for (WinningStrategy winningStrategy: winningStrategies) {
             winningStrategy.undo(board, lastMove);
         }
+    }
 
+    private Move remove() {
+        if (moves.isEmpty()) {
+            System.out.println("No moves to undo");
+            return null;
+        }
+        Move lastMove = moves.get(moves.size() - 1);
+        moves.remove(lastMove);
+        return lastMove;
+    }
+
+    private void updateNextPlayer() {
         if (nextPlayerIndex != 0) {
             nextPlayerIndex--;
         } else {
