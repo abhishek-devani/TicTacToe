@@ -12,11 +12,13 @@ import tictactoe.winningstrategies.WinningStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 public class App {
     public static void main(String[] args) throws DuplicateSymbolException, PlayersCountMismatchException, MoreThanOneBotException {
 
         GameController gameController = new GameController();
+        Scanner scanner = new Scanner(System.in);
 
         int dimension = 3;
         List<Player> playerList = new ArrayList<>();
@@ -30,7 +32,31 @@ public class App {
         winningStrategies.add(new DiagonalWinningStrategy());
 
         Game game = gameController.startGame(dimension, playerList, winningStrategies);
-        game.printBoard();
+
+        while (game.getGameState().equals(GameState.in_progress)) {
+//            game.printBoard();
+            gameController.printBoard(game);
+
+            System.out.println("Does anyone want to undo? (y/n)");
+            String undo = scanner.next();
+
+            if (undo.equalsIgnoreCase("y")) {
+                gameController.undo(game);
+                continue;
+            }
+
+            gameController.makeMove(game);
+        }
+
+        // If I'm here, it means game is not in progress anymore
+        if (GameState.success.equals(game.getGameState())) {
+            gameController.printBoard(game);
+            System.out.println(game.getWinner().getName() +", Congratulation! You won the game :)");
+        }
+        if (GameState.draw.equals(game.getGameState())) {
+            gameController.printBoard(game);
+            System.out.println("Match tied :| ");
+        }
 
     }
 }

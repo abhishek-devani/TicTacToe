@@ -28,4 +28,18 @@
 3. Implement startGame and printBoard methods in it.
 4. Create AppRunner(main) package.
 5. Create App class in it.
-6. 
+
+---
+## MakeMove feature
+
+1. Create makeMove method in gameController and pass that responsibility to game.
+2. Create makeMove method in game class and write your login to check winner by creating checkWinner method.
+3. Create makeMove method in Player and bot class.
+
+---
+## Winning Strategy
+
+1. Write logic for rowWinningStrategy
+2. Write logic for columnWinningStrategy
+3. Write logic for diagonalWinningStrategy
+

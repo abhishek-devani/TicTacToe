@@ -24,6 +24,9 @@ public class Game {
         board = new Board(dimension);
         this.players = players;
         this.winningStrategies = winningStrategies;
+        this.gameState = GameState.in_progress;
+        this.nextPlayerIndex = 0;
+        this.moves = new ArrayList<>();
     }
 
     public static Builder getBuilder() {
@@ -32,6 +35,65 @@ public class Game {
 
     public void printBoard() {
         board.printBoard();
+    }
+
+    public void makeMove() {
+
+        Player player = players.get(nextPlayerIndex);
+        Cell cell = player.makeMove(board);
+
+        Move move = new Move(cell, player);
+        moves.add(move);
+
+        if (checkWinner(move, board)) {
+            gameState = GameState.success;
+            winner = player;
+            return;
+        }
+
+        // Checking for Draw
+        if (moves.size() == board.getDimension()* board.getDimension()) {
+            gameState = GameState.draw;
+            return;
+        }
+
+        // update the next player accordingly
+        nextPlayerIndex++;
+        nextPlayerIndex = nextPlayerIndex % players.size();
+
+    }
+
+    private boolean checkWinner(Move move, Board board) {
+        for (WinningStrategy winningStrategy: winningStrategies) {
+            if (winningStrategy.checkWinner(board, move)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public void undo() {
+
+        if (moves.isEmpty()) {
+            System.out.println("No moves to undo");
+            return;
+        }
+        Move lastMove = moves.get(moves.size() - 1);
+        moves.remove(lastMove);
+
+        Cell cell = lastMove.getCell();
+        cell.setCellState(CellState.EMPTY);
+        cell.setPlayer(null);
+
+        for (WinningStrategy winningStrategy: winningStrategies) {
+            winningStrategy.undo(board, lastMove);
+        }
+
+        if (nextPlayerIndex != 0) {
+            nextPlayerIndex--;
+        } else {
+            nextPlayerIndex = players.size() - 1;
+        }
     }
 
     public static class Builder {

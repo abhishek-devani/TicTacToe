@@ -3,7 +3,7 @@ package tictactoe.botplayingstrategy;
 import tictactoe.models.BotDifficultyLevel;
 
 public class BotPlayingStrategyFactory {
-    public static BotPlayingStrategy getBotPlayingStrategyForDifficultyLevel(BotDifficultyLevel botDifficultyLevel) {
+    public static BotPlayingStrategy getBotPlayingStrategyForDifficultyLevel (BotDifficultyLevel botDifficultyLevel) {
 
         if (botDifficultyLevel.equals(BotDifficultyLevel.EASY)) {
             return new EasyBotPlayingStrategy();
